@@ -1,5 +1,6 @@
 <?php
 
+
 if (isset($_POST['submit'])) {
     $title = $_POST['title'];
     $annotation = $_POST['annotation'];
@@ -23,6 +24,6 @@ if (isset($_POST['submit'])) {
 
 }
 
-// header("location: validator.php");
+header('Location: http://localhost:8080/');
 
 ?>
