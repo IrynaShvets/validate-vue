@@ -231,7 +231,7 @@ export default {
         category: "",
         
       },
-      isValid: true,
+      isValid: false,
         error: "",
     };
   },
@@ -265,14 +265,16 @@ export default {
     },
 
     send() {
-      if (this.isValid === true) {
+      const { form } = this.$refs;
+      const isFormValid = form.this.validate();
+      if (isFormValid) {
         axios.post("/validator.php", this.getFormFields).then((response) => {
           console.log(response);
           return response.data;
         });
+
       }
-        
-      }
+    }
     
   },
 };
