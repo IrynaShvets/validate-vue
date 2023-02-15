@@ -32,7 +32,7 @@ $input = json_decode($inputJSON, TRUE);
 
 header('Content-Type: application/json');
 
-echo json_encode($input);
+// echo json_encode($input);
 
 
 $titleErr = $annotationErr = $contentErr = $emailErr = $viewsErr = $dateErr = $publishInIndexErr = $categoryErr = "";
@@ -83,21 +83,22 @@ $valid = true;
     
     if (isset($input["views"])) {
         $views = $input["views"];
+
         if (!filter_var($views, FILTER_VALIDATE_INT, ["options" => ["min_range" => 0 , "max_range"=> 2147483647]]) !== false) {
             $valid = false;
             $viewsErr = "Кількість переглядів має бути числом, не повинно бути негативним і в межах розміру UNSIGNED INT";
-        }
+        };
     }
    
-    if (isset($input["date"])) {
-        $date = $input["date"];
-        if (strtotime($date) < time()) {
-            echo strtotime($date) . '<br>';
-            echo time() . '<br>';
-            $valid = false;
-            $dateErr = "Дата публікації не повинна бути раніше поточної дати";
-        }
-    }
+    // if (isset($input["date"])) {
+    //     $date = $input["date"];
+    //     $current = date('Y-m-d');
+    //     echo $date;
+    //     echo $current;
+    //     if ($date < $current) {
+    //         $dateErr = "Дата публікації не повинна бути раніше поточної дати";
+    //     }
+    // }
 
     if (empty($input["publish_in_index"])) {
         $valid = false;
@@ -105,9 +106,22 @@ $valid = true;
     }
      else {
         $publishInIndex = $input["publish_in_index"];
-        if ($publishInIndex !== 'yes' && $publishInIndex !== 'no') {
+        if ($publishInIndex === true || $publishInIndex === false) {
             $valid = false;
             $publishInIndexErr = "Поле публікувати на головній має містити значення 'yes' або 'no'";
+        }
+    }
+
+    if (isset($input["category"])) {
+        $selectArr = [1, 2, 3];
+       if (!in_array($input["category"], $selectArr)) {
+        $valid = false;
+        $categoryErr = "Поле категрія має бути одним із значень [1, 2, 3]";
+       }
+    } else {
+        if (is_integer($input["category"])) {
+            $valid = false;
+        $categoryErr = "Поле категрія має бути числом";
         }
     }
 
@@ -120,18 +134,12 @@ $valid = true;
         $date = $input['date'] ? $input["date"]: '';
         $publishInIndex = $input['publish_in_index'] ? $input["publish_in_index"]: '';
         $category = $input['category'] ? $input["category"]: '';
-
-        // echo $title . '<br>';
-        // echo $annotation . '<br>';
-        // echo $content . '<br>';
-        // echo $email . '<br>';
-        // echo $views . '<br>';
-        // echo $date . '<br>';
-        // echo $publishInIndex . '<br>';
-        // echo $category . '<br>';
     }
 
-    $errorsArr = ['title' => $titleErr, 'annotation' => $annotationErr, 'content' => $contentErr, 'email' => $emailErr, 'views' => $viewsErr, 'date' => $dateErr, 'publishInIndex' => $publishInIndexErr, 'category' => $categoryErr];
+    $errorsArr = [
+       1 => ['valid' => $valid,],
+       2 => ['title' => $titleErr, 'annotation' => $annotationErr, 'content' => $contentErr, 'email' => $emailErr, 'views' => $viewsErr, 'date' => $dateErr, 'publishInIndex' => $publishInIndexErr, 'category' => $categoryErr]
+    ];
     
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['errors' => $errorsArr], JSON_UNESCAPED_UNICODE);
