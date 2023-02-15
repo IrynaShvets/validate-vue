@@ -1,12 +1,10 @@
 import axios from 'axios';
 
-const axiosInstance = axios.create({
-  baseURL: 'http://backend',
+export const axiosInstance = axios.create({
+  baseURL: 'https://localhost',
   headers: {
     "Content-type": "application/json",
     credentials: 'include',
-    mode: "no-cors",
 }
 });
 
-export default axiosInstance;

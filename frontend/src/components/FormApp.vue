@@ -1,15 +1,15 @@
 <template>
   <div class="container">
     <div class="row">
-      <p><span class="error">* required field</span></p>
       <form
-        name="myForm"
         style="width: 100%"
-        method="post"
-        ref="form"
+       
         @submit.prevent="send"
       >
-        <div class="form-group row">
+        <div
+          class="form-group row"
+          :class="{ error: v$.form.title.$errors.length }"
+        >
           <label for="title" class="col-md-2 col-form-label">Заголовок</label>
           <div class="col-md-10 position-relative">
             <input
@@ -17,18 +17,23 @@
               class="form-control"
               id="title"
               name="title"
-              v-model="getFormFields.title"
-              minlength="3"
-              maxlength="255"
-              :rules="titleRules"
-              :class="!isValid && 'input--error'"
-    />
-    <span v-if="!isValid" class="input__error">{{ error }}</span>
+              v-model="v$.form.title.$model"
+            />
             <div class="invalid-feedback"></div>
+            <div
+              class="input-errors"
+              v-for="(error, index) of v$.form.title.$errors"
+              :key="index"
+            >
+              <div class="error-msg">{{ error.$message }}</div>
+            </div>
           </div>
         </div>
 
-        <div class="form-group row">
+        <div
+          class="form-group row"
+          :class="{ error: v$.form.annotation.$errors.length }"
+        >
           <label for="annotation" class="col-md-2 col-form-label"
             >Аннотация</label
           >
@@ -39,15 +44,24 @@
               class="form-control"
               cols="30"
               rows="10"
-              v-model="getFormFields.annotation"
-              maxlength="500"
+              v-model="v$.form.annotation.$model"
             ></textarea>
 
             <div class="invalid-feedback"></div>
+            <div
+              class="input-errors"
+              v-for="(error, index) of v$.form.annotation.$errors"
+              :key="index"
+            >
+              <div class="error-msg">{{ error.$message }}</div>
+            </div>
           </div>
         </div>
 
-        <div class="form-group row">
+        <div
+          class="form-group row"
+          :class="{ error: v$.form.content.$errors.length }"
+        >
           <label for="content" class="col-md-2 col-form-label"
             >Текст новости</label
           >
@@ -58,15 +72,23 @@
               class="form-control"
               cols="30"
               rows="10"
-              maxlength="30000"
-              v-model="getFormFields.content"
+              v-model="v$.form.content.$model"
             ></textarea>
-            <div class="invalid-feedback">
+            <div class="invalid-feedback"></div>
+            <div
+              class="input-errors"
+              v-for="(error, index) of v$.form.content.$errors"
+              :key="index"
+            >
+              <div class="error-msg">{{ error.$message }}</div>
             </div>
           </div>
         </div>
 
-        <div class="form-group row">
+        <div
+          class="form-group row"
+          :class="{ error: v$.form.email.$errors.length }"
+        >
           <label for="email" class="col-md-2 col-form-label"
             >Email автора для связи</label
           >
@@ -76,15 +98,23 @@
               class="form-control"
               id="email"
               name="email"
-              v-model="getFormFields.email"
-              required
-              
+              v-model="v$.form.email.$model"
             />
             <div class="invalid-feedback"></div>
+            <div
+              class="input-errors"
+              v-for="(error, index) of v$.form.email.$errors"
+              :key="index"
+            >
+              <div class="error-msg">{{ error.$message }}</div>
+            </div>
           </div>
         </div>
 
-        <div class="form-group row">
+        <div
+          class="form-group row"
+          :class="{ error: v$.form.views.$errors.length }"
+        >
           <label for="views" class="col-md-2 col-form-label"
             >Кол-во просмотров</label
           >
@@ -94,15 +124,23 @@
               class="form-control"
               id="views"
               name="views"
-              v-model="getFormFields.views"
-              min="0"
+              v-model="v$.form.views.$model"
             />
-            <div class="invalid-feedback">
+            <div class="invalid-feedback"></div>
+            <div
+              class="input-errors"
+              v-for="(error, index) of v$.form.views.$errors"
+              :key="index"
+            >
+              <div class="error-msg">{{ error.$message }}</div>
             </div>
           </div>
         </div>
 
-        <div class="form-group row">
+        <div
+          class="form-group row"
+         
+        >
           <label for="date" class="col-md-2 col-form-label"
             >Дата публикации</label
           >
@@ -112,16 +150,16 @@
               class="form-control"
               id="date"
               name="date"
-              v-model="getFormFields.date"
-              min=""
-              step="1"
+              v-model="form.date"
             />
-            <div class="invalid-feedback">
-            </div>
+            <div class="invalid-feedback"></div>
+            
           </div>
         </div>
 
-        <div class="form-group row">
+        <div
+          class="form-group row"
+        >
           <label for="is_publish" class="col-md-2 col-form-label"
             >Публичная новость</label
           >
@@ -131,13 +169,16 @@
               class="form-control"
               id="is_publish"
               name="is_publish"
-              v-model="getFormFields.is_publish"
+              v-model="form.is_publish"
             />
             <div class="invalid-feedback"></div>
           </div>
         </div>
 
-        <div class="form-group row">
+        <div
+          class="form-group row"
+          :class="{ error: v$.form.publish_in_index.$errors.length }"
+        >
           <label class="col-md-2 col-form-label">Публиковать на главной</label>
           <div class="col-md-10">
             <div class="form-check">
@@ -145,7 +186,7 @@
                 class="form-check-input"
                 type="radio"
                 name="publish_in_index"
-                v-model="getFormFields.publish_in_index"
+                v-model="v$.form.publish_in_index.$model"
                 required
                 id="publish_in_index_yes"
                 value="yes"
@@ -160,7 +201,7 @@
                 class="form-check-input"
                 type="radio"
                 name="publish_in_index"
-                v-model="getFormFields.publish_in_index"
+                v-model="v$.form.publish_in_index.$model"
                 required
                 id="publish_in_index_no"
                 value="no"
@@ -170,10 +211,19 @@
               </label>
             </div>
             <div class="invalid-feedback"></div>
+            <div
+              class="input-errors"
+              v-for="(error, index) of v$.form.views.$errors"
+              :key="index"
+            >
+              <div class="error-msg">{{ error.$message }}</div>
+            </div>
           </div>
         </div>
 
-        <div class="form-group row">
+        <div
+          class="form-group row"
+        >
           <label for="category" class="col-md-2 col-form-label"
             >Публичная новость</label
           >
@@ -182,14 +232,13 @@
               id="category"
               class="form-control"
               name="category"
-              v-model="getFormFields.category"
+              v-model="form.category"
             >
               <option value="1" selected>Спорт</option>
               <option value="2">Культура</option>
               <option value="3">Политика</option>
             </select>
-            <div class="invalid-feedback">
-            </div>
+            <div class="invalid-feedback"></div>
           </div>
         </div>
 
@@ -200,9 +249,7 @@
             </button>
           </div>
           <div class="col-md-3">
-            <div class="alert alert-success">
-                Форма валидна
-            </div>
+            <div class="alert alert-success">Форма валидна</div>
           </div>
         </div>
       </form>
@@ -211,15 +258,19 @@
 </template>
 
 <script>
-import axios from "../utils/axios.js";
-import { emailValidation, isRequired } from "../utils/validationRules.js";
+import {axiosInstance} from "../utils/axios.js";
+import useVuelidate from "@vuelidate/core";
+import { required, email, minLength, maxLength, integer } from "@vuelidate/validators";
 
 export default {
   name: "FormApp",
+  setup() {
+    return { v$: useVuelidate() };
+  },
 
   data() {
     return {
-      getFormFields: {
+      form: {
         title: "",
         annotation: "",
         content: "",
@@ -229,69 +280,78 @@ export default {
         is_publish: "",
         publish_in_index: "",
         category: "",
-        
       },
-      isValid: false,
-        error: "",
     };
   },
 
-  computed: {
-    rules() {
+  validations() {
       return {
-        emailValidation,
-        isRequired,
+        form: {
+          title: {
+            required,
+            min: minLength(3),
+            max: maxLength(255),
+          },
+          annotation: {
+            max: maxLength(500),
+          },
+          content: {
+            max: maxLength(30000),
+          },
+          email: {
+            required,
+            email,
+          },
+          views: {
+            integer,
+            min: minLength(0),
+            max: maxLength(2147483647),
+          },
+          // date: {
+          //   maxValue: maxValue(new Date()),
+          // },
+          publish_in_index: {
+            required,
+          },
+        },
       };
     },
-    emailRules() {
-      return [this.rules.emailValidation, this.rules.isRequired];
-    },
-    titleRules() {
-      return [this.rules.isRequired];
-    },
+
+    validationConfig: {
+    $lazy: true,
   },
 
   methods: {
     
-    validate() {
-      this.isValid = this.rules.every((rule) => {
-        const { hasPassed, message } = rule(this.value);
-        if (!hasPassed) {
-          this.error = message || this.errorMessage;
-        }
-        return hasPassed;
-      });
-      return this.isValid;
+  async send() {
+      const isFormCorrect = this.v$.$validate();
+      if (!isFormCorrect) return;
+
+      try {
+        const { data } = await axiosInstance.post("/validator.php", this.getFormFields)
+        console.log(data);
+        return data;
+      } catch (error) {
+        console.error(error);
+      }
+      
     },
 
-    send() {
-      const { form } = this.$refs;
-      const isFormValid = form.this.validate();
-      if (isFormValid) {
-        axios.post("/validator.php", this.getFormFields).then((response) => {
-          console.log(response);
-          return response.data;
-        });
-
-      }
-    }
-    
   },
 };
 </script>
 
 <style scoped>
 .input--error {
-    border-color: red;
+  border-color: red;
 }
 .input__error {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    width: 100%;
-    font-size: 12px;
-    color: red;
-    line-height: 1.3;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 100%;
+  font-size: 12px;
+  color: red;
+  line-height: 1.3;
 }
-
 </style>

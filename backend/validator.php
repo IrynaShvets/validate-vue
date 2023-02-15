@@ -1,6 +1,5 @@
 <?php
 
-
 if (isset($_POST['submit'])) {
     $title = $_POST['title'];
     $annotation = $_POST['annotation'];
@@ -23,7 +22,5 @@ if (isset($_POST['submit'])) {
     echo $category . '<br>';
 
 }
-
-header('Location: http://localhost:8080/');
 
 ?>
