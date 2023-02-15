@@ -1,11 +1,7 @@
 <template>
   <div class="container">
     <div class="row">
-      <form
-        style="width: 100%"
-       
-        @submit.prevent="send"
-      >
+      <form style="width: 100%" @submit.prevent="send">
         <div
           class="form-group row"
           :class="{ error: v$.form.title.$errors.length }"
@@ -163,9 +159,7 @@
           </div>
         </div>
 
-        <div
-          class="form-group row"
-        >
+        <div class="form-group row">
           <label for="is_publish" class="col-md-2 col-form-label"
             >Публичная новость</label
           >
@@ -227,9 +221,7 @@
           </div>
         </div>
 
-        <div
-          class="form-group row"
-        >
+        <div class="form-group row">
           <label for="category" class="col-md-2 col-form-label"
             >Публичная новость</label
           >
@@ -264,9 +256,19 @@
 </template>
 
 <script>
-import {axiosInstance} from "../utils/axios.js";
+// import {axiosInstance} from "../utils/axios.js";
+import axios from "axios";
 import useVuelidate from "@vuelidate/core";
-import { required, email, minLength, maxLength, integer, maxValue } from "@vuelidate/validators";
+
+
+import {
+  required,
+  email,
+  minLength,
+  maxLength,
+  integer,
+  maxValue,
+} from "@vuelidate/validators";
 
 export default {
   name: "FormApp",
@@ -291,55 +293,68 @@ export default {
   },
 
   validations() {
-      return {
-        form: {
-          title: {
-            required,
-            min: minLength(3),
-            max: maxLength(255),
-          },
-          annotation: {
-            max: maxLength(500),
-          },
-          content: {
-            max: maxLength(30000),
-          },
-          email: {
-            required,
-            email,
-          },
-          views: {
-            integer,
-            min: minLength(0),
-            max: maxLength(2147483647),
-          },
-          date: {
-            maxValue: maxValue(new Date().toLocaleDateString("en-GB").replaceAll('/', '.')),
-          },
-          publish_in_index: {
-            required,
-          },
+    return {
+      form: {
+        title: {
+          required,
+          min: minLength(3),
+          max: maxLength(255),
         },
+        annotation: {
+          max: maxLength(500),
+        },
+        content: {
+          max: maxLength(30000),
+        },
+        email: {
+          required,
+          email,
+        },
+        views: {
+          integer,
+          min: minLength(0),
+          max: maxLength(2147483647),
+        },
+        date: {
+          maxValue: maxValue(
+            new Date().toLocaleDateString("en-GB").replaceAll("/", ".")
+          ),
+        },
+        publish_in_index: {
+          required,
+        },
+      },
+    };
+  },
+
+  computed: {
+    formData() {
+      return {
+        title: this.form.title,
+        annotation: this.form.annotation,
+        content: this.form.content,
+        email: this.form.email,
+        views: this.form.views,
+        date: this.form.date,
+        is_publish: this.form.is_publish,
+        publish_in_index: this.form.publish_in_index,
+        category: this.form.category,
       };
     },
-
+  },
 
   methods: {
-    
-  async send() {
+    async send() {
       const isFormCorrect = this.v$.$validate();
       if (!isFormCorrect) return;
-
       try {
-        const { data } = await axiosInstance.post("/validator.php", this.getFormFields)
+        const { data } = await axios.post("/validator.php", this.formData);
         console.log(data);
         return data;
       } catch (error) {
         console.error(error);
       }
-      
     },
-
   },
 };
 </script>
