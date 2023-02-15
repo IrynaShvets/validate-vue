@@ -135,7 +135,7 @@
 
         <div
           class="form-group row"
-          :class="{ error: v$.form.date.$errors.length }"
+          
         >
           <label for="date" class="col-md-2 col-form-label"
             >Дата публикации</label
@@ -146,16 +146,9 @@
               class="form-control"
               id="date"
               name="date"
-              v-model="v$.form.date.$model"
+              v-model="form.date"
             />
             <div class="invalid-feedback"></div>
-            <div
-              class="input-errors"
-              v-for="(error, index) of v$.form.date.$errors"
-              :key="index"
-            >
-              <div class="error-msg">{{ error.$message }}</div>
-            </div>
           </div>
         </div>
 
@@ -267,7 +260,7 @@ import {
   minLength,
   maxLength,
   integer,
-  maxValue,
+  // maxValue
 } from "@vuelidate/validators";
 
 export default {
@@ -289,6 +282,8 @@ export default {
         publish_in_index: "",
         category: "",
       },
+
+      errors: [],
     };
   },
 
@@ -315,11 +310,11 @@ export default {
           min: minLength(0),
           max: maxLength(2147483647),
         },
-        date: {
-          maxValue: maxValue(
-            new Date().toLocaleDateString("en-GB").replaceAll("/", ".")
-          ),
-        },
+        // date: {
+        //   maxValue: maxValue(
+        //     new Date().toLocaleDateString("en-GB").replaceAll("/", ".")
+        //   ),
+        // },
         publish_in_index: {
           required,
         },
@@ -339,21 +334,30 @@ export default {
         is_publish: this.form.is_publish,
         publish_in_index: this.form.publish_in_index,
         category: this.form.category,
+        errors: this.errors,
       };
     },
   },
 
   methods: {
     async send() {
-      const isFormCorrect = this.v$.$validate();
-      if (!isFormCorrect) return;
+      // const isFormCorrect = await this.v$.$validate();
+      // console.log(isFormCorrect);
+      // if (!isFormCorrect) return;
+
       try {
-        const { data } = await axios.post("/validator.php", this.formData);
-        console.log(data);
-        return data;
+        if (!this.v$.$error) {
+        const response = await axios.post("/validator.php", this.formData);
+        console.log(response);
+        return response.data;
+      } else {
+
+        alert('Form failed validation')
+      }
+        
       } catch (error) {
         console.error(error);
-      }
+      } 
     },
   },
 };
