@@ -139,7 +139,7 @@
 
         <div
           class="form-group row"
-         
+          :class="{ error: v$.form.date.$errors.length }"
         >
           <label for="date" class="col-md-2 col-form-label"
             >Дата публикации</label
@@ -150,10 +150,16 @@
               class="form-control"
               id="date"
               name="date"
-              v-model="form.date"
+              v-model="v$.form.date.$model"
             />
             <div class="invalid-feedback"></div>
-            
+            <div
+              class="input-errors"
+              v-for="(error, index) of v$.form.date.$errors"
+              :key="index"
+            >
+              <div class="error-msg">{{ error.$message }}</div>
+            </div>
           </div>
         </div>
 
@@ -260,7 +266,7 @@
 <script>
 import {axiosInstance} from "../utils/axios.js";
 import useVuelidate from "@vuelidate/core";
-import { required, email, minLength, maxLength, integer } from "@vuelidate/validators";
+import { required, email, minLength, maxLength, integer, maxValue } from "@vuelidate/validators";
 
 export default {
   name: "FormApp",
@@ -307,9 +313,9 @@ export default {
             min: minLength(0),
             max: maxLength(2147483647),
           },
-          // date: {
-          //   maxValue: maxValue(new Date()),
-          // },
+          date: {
+            maxValue: maxValue(new Date().toLocaleDateString("en-GB").replaceAll('/', '.')),
+          },
           publish_in_index: {
             required,
           },
@@ -317,9 +323,6 @@ export default {
       };
     },
 
-    validationConfig: {
-    $lazy: true,
-  },
 
   methods: {
     
