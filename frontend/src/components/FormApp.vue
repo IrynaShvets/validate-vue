@@ -15,13 +15,14 @@
               name="title"
               v-model="v$.form.title.$model"
               @blur="v$.form.title.$touch"
-              
             />
-            <div class="invalid-feedback">
-            </div>
-            <p class="text-danger">
-                {{ errors.title !== '' ? errors.title : ''}}
-              </p>
+            <div class="invalid-feedback"></div>
+      
+              <p class="text-danger">
+              {{ errors.title !== "" ? errors.title : "" }}
+            </p>
+          
+            
             <div
               class="input-errors"
               v-for="(error, index) of v$.form.title.$errors"
@@ -41,7 +42,6 @@
           >
           <div class="col-md-10">
             <textarea
-            
               name="annotation"
               id="annotation"
               class="form-control"
@@ -52,9 +52,10 @@
             ></textarea>
 
             <div class="invalid-feedback"></div>
+
             <p class="text-danger">
-                {{ errors.annotation !== '' ? errors.annotation : ''}}
-              </p>
+              {{ errors.annotation !== "" ? errors.annotation : "" }}
+            </p>
             <div
               class="input-errors"
               v-for="(error, index) of v$.form.annotation.$errors"
@@ -84,8 +85,8 @@
             ></textarea>
             <div class="invalid-feedback"></div>
             <p class="text-danger">
-                {{ errors.content !== '' ? errors.content : ''}}
-              </p>
+              {{ errors.content !== "" ? errors.content : "" }}
+            </p>
             <div
               class="input-errors"
               v-for="(error, index) of v$.form.content.$errors"
@@ -114,8 +115,8 @@
             />
             <div class="invalid-feedback"></div>
             <p class="text-danger">
-                {{ errors.email !== '' ? errors.email : ''}}
-              </p>
+              {{ errors.email !== "" ? errors.email : "" }}
+            </p>
             <div
               class="input-errors"
               v-for="(error, index) of v$.form.email.$errors"
@@ -139,15 +140,13 @@
               class="form-control"
               id="views"
               name="views"
-              min="0"
-              max="2147483647"
               v-model="v$.form.views.$model"
               @blur="v$.form.views.$touch"
             />
             <div class="invalid-feedback"></div>
             <p class="text-danger">
-                {{ errors.views !== '' ? errors.views : ''}}
-              </p>
+              {{ errors.views !== "" ? errors.views : "" }}
+            </p>
             <div
               class="input-errors"
               v-for="(error, index) of v$.form.views.$errors"
@@ -158,10 +157,7 @@
           </div>
         </div>
 
-        <div
-          class="form-group row"
-          :class="{ error: v$.form.views.$errors.length }"
-        >
+        <div class="form-group row">
           <label for="date" class="col-md-2 col-form-label"
             >Дата публикации</label
           >
@@ -171,19 +167,12 @@
               class="form-control"
               id="date"
               name="date"
-              v-model="v$.form.date.$model"
+              v-model="form.date"
             />
             <div class="invalid-feedback"></div>
-            <!-- <p class="text-danger">
-                {{ errors.date !== '' ? errors.date : ''}}
-            </p> -->
-            <div
-              class="input-errors"
-              v-for="(error, index) of v$.form.date.$errors"
-              :key="index"
-            >
-              <div class="error-msg">{{ error.$message }}</div>
-            </div>
+            <p class="text-danger">
+              {{ errors.date !== "" ? errors.date : "" }}
+            </p>
           </div>
         </div>
 
@@ -260,16 +249,15 @@
               class="form-control"
               name="category"
               v-model="form.category"
-              
             >
-            <option disabled selected>Выберете категорию из списка..</option>
+              <option disabled selected>Выберете категорию из списка..</option>
               <option value="1">Спорт</option>
               <option value="2">Культура</option>
               <option value="3">Политика</option>
             </select>
             <div class="invalid-feedback"></div>
             <p class="text-danger">
-                {{ errors.category !== '' ? errors.category : ''}}
+              {{ errors.category !== "" ? errors.category : "" }}
             </p>
           </div>
         </div>
@@ -281,9 +269,10 @@
             </button>
           </div>
           <div class="col-md-3" >
-            <div class="alert alert-success" v-if="valid === true">Форма валидна
-             
+            <div class="alert alert-success" v-show="valid === true">
+              Форма валидна
             </div>
+            
           </div>
         </div>
       </form>
@@ -292,7 +281,6 @@
 </template>
 
 <script>
-// import {axiosInstance} from "../utils/axios.js";
 import axios from "axios";
 import useVuelidate from "@vuelidate/core";
 
@@ -303,13 +291,15 @@ import {
   minLength,
   maxLength,
   integer,
-  maxValue
 } from "@vuelidate/validators";
 
 export default {
   name: "FormApp",
   setup() {
-    return { v$: useVuelidate() };
+    return { 
+      v$: useVuelidate(),
+      
+    };
   },
 
   data() {
@@ -326,8 +316,9 @@ export default {
         category: "",
       },
 
-      errors: [
-      ],
+      errors: {
+       
+      },
       valid: true,
     };
   },
@@ -355,11 +346,6 @@ export default {
           min: minLength(0),
           max: maxLength(2147483647),
         },
-        date: {
-          maxValue: maxValue(
-            new Date().toLocaleDateString("en-GB").replaceAll("/", "-")
-          ),
-        },
         publish_in_index: {
           required,
         },
@@ -383,28 +369,29 @@ export default {
         valid: this.valid,
       };
     },
-
   },
 
   methods: {
     async send() {
+      
       try {
-        if (this.v$.$error && this.valid === false) {
-          return;
-        } else {
+        const result = await this.v$.$validate();
+      
         const response = await axios.post("/validator.php", this.formData);
         console.log(response);
+        
+        if (!result && this.valid === false) {
+          return;
+        } 
         this.valid = response.data.errors[1];
-        this.errors = response.data.errors[2];
-        return response.data;
-      }
+          this.errors = response.data.errors[2];
+          return response.data;
+        
         
       } catch (error) {
         console.error(error);
       } 
     },
-
-    
   },
 };
 </script>

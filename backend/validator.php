@@ -90,15 +90,14 @@ $valid = true;
         };
     }
    
-    // if (isset($input["date"])) {
-    //     $date = $input["date"];
-    //     $current = date('Y-m-d');
-    //     echo $date;
-    //     echo $current;
-    //     if ($date < $current) {
-    //         $dateErr = "Дата публікації не повинна бути раніше поточної дати";
-    //     }
-    // }
+    if (isset($input["date"])) {
+        $date = $input["date"];
+        $current = date('d.m.Y', strtotime($date));
+
+        if (strtotime($date) > strtotime($current)) {
+            $dateErr = "Дата публікації не повинна бути раніше поточної дати";
+        }
+    }
 
     if (empty($input["publish_in_index"])) {
         $valid = false;
@@ -111,18 +110,13 @@ $valid = true;
             $publishInIndexErr = "Поле публікувати на головній має містити значення 'yes' або 'no'";
         }
     }
-
+    
     if (isset($input["category"])) {
         $selectArr = [1, 2, 3];
        if (!in_array($input["category"], $selectArr)) {
         $valid = false;
         $categoryErr = "Поле категрія має бути одним із значень [1, 2, 3]";
        }
-    } else {
-        if (is_integer($input["category"])) {
-            $valid = false;
-        $categoryErr = "Поле категрія має бути числом";
-        }
     }
 
     if ($valid === true && isset($input)) {
@@ -138,12 +132,12 @@ $valid = true;
 
     $errorsArr = [
        1 => ['valid' => $valid,],
-       2 => ['title' => $titleErr, 'annotation' => $annotationErr, 'content' => $contentErr, 'email' => $emailErr, 'views' => $viewsErr, 'date' => $dateErr, 'publishInIndex' => $publishInIndexErr, 'category' => $categoryErr]
+       2 => ['title' => $titleErr, 'annotation' => $annotationErr, 'content' => $contentErr, 'email' => $emailErr, 'views' => $viewsErr, 'date' => $dateErr, 'publishInIndex' => $publishInIndexErr, 'category' => $categoryErr],
     ];
     
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['errors' => $errorsArr], JSON_UNESCAPED_UNICODE);
     die();
-   
 
+    
 ?>
