@@ -383,10 +383,11 @@ export default {
         if (!result && this.valid === false) {
           return;
         } 
-        this.valid = response.data.errors[1];
-          this.errors = response.data.errors[2];
+        this.valid = response.data.errors[1].valid;
+        this.errors = response.data.errors[2];
+        console.log(response.data.errors[2])
+        console.log(this.errors)
           return response.data;
-        
         
       } catch (error) {
         console.error(error);

@@ -81,8 +81,10 @@ $valid = true;
         }
     }
     
-    if (isset($input["views"])) {
+
+    if (!empty($input["views"])) {
         $views = $input["views"];
+
 
         if (!filter_var($views, FILTER_VALIDATE_INT, ["options" => ["min_range" => 0 , "max_range"=> 2147483647]]) !== false) {
             $valid = false;
@@ -111,7 +113,7 @@ $valid = true;
         }
     }
     
-    if (isset($input["category"])) {
+    if (!empty($input["category"])) {
         $selectArr = [1, 2, 3];
        if (!in_array($input["category"], $selectArr)) {
         $valid = false;
