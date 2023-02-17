@@ -92,11 +92,11 @@ $valid = true;
         };
     }
    
-    if (isset($input["date"])) {
+    if (!empty($input["date"])) {
         $date = $input["date"];
-        $current = date('d.m.Y', strtotime($date));
 
-        if (strtotime($date) > strtotime($current)) {
+        $today = date("Y-m-d"); 
+        if (strtotime($today) > strtotime($date)) {
             $dateErr = "Дата публікації не повинна бути раніше поточної дати";
         }
     }
@@ -136,7 +136,7 @@ $valid = true;
        1 => ['valid' => $valid,],
        2 => ['title' => $titleErr, 'annotation' => $annotationErr, 'content' => $contentErr, 'email' => $emailErr, 'views' => $viewsErr, 'date' => $dateErr, 'publishInIndex' => $publishInIndexErr, 'category' => $categoryErr],
     ];
-    
+     
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['errors' => $errorsArr], JSON_UNESCAPED_UNICODE);
     die();
